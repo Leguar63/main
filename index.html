@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V.R. Tech | Innovation & IT Solutions</title>
+    <meta name="description" content="V.R. Tech - Ihr Partner für Server-Administration, Web-Development und Social Media Management.">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --secondary: #7000ff;
+            --dark-bg: #050505;
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-main);
+            font-family: 'Rajdhani', sans-serif;
+            overflow-x: hidden;
+            width: 100vw;
+        }
+
+        /* --- 3D Background Canvas --- */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.8;
+        }
+
+        /* --- Typography & Global --- */
+        h1, h2, h3 {
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* --- Navigation --- */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 0;
+            z-index: 100;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+            backdrop-filter: blur(5px);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, var(--primary), #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 242, 255, 0.5);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            font-weight: 500;
+            font-size: 1.1rem;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--primary);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .btn-cta {
+            padding: 10px 25px;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            font-weight: 700;
+            border-radius: 4px;
+        }
+
+        .btn-cta:hover {
+            background: var(--primary);
+            color: #000;
+            box-shadow: 0 0 15px var(--primary);
+        }
+
+        /* --- Hero Section --- */
+        header {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-content h1 {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+
+        .hero-content h1 span {
+            color: var(--primary);
+            display: block;
+        }
+
+        .hero-content p {
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* --- Services Section --- */
+        #services {
+            padding: 100px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 60px;
+        }
+
+        .section-title span {
+            border-bottom: 3px solid var(--secondary);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            padding: 40px;
+            border-radius: 10px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            border-color: var(--primary);
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* --- Team Section --- */
+        #team {
+            padding: 100px 0;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 50px;
+        }
+
+        .team-member {
+            background: var(--glass);
+            padding: 40px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+            box-shadow: 0 0 20px rgba(112, 0, 255, 0.4);
+        }
+
+        .member-info h3 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .role {
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: block;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        /* --- Footer & Legal --- */
+        footer {
+            padding: 50px 0 20px;
+            border-top: 1px solid var(--glass-border);
+            background: #000;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .footer-col h4 {
+            color: #fff;
+            margin-bottom: 20px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 10px;
+        }
+
+        .legal-notice {
+            text-align: center;
+            font-size: 0.75rem;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #222;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .hero-content h1 { font-size: 3rem; }
+            .team-grid { grid-template-columns: 1fr; }
+            .nav-links { display: none; } /* Simplified for mobile */
+            .team-member { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="canvas-container"></div>
+
+    <nav>
+        <div class="container nav-content">
+            <div class="logo">V.R. TECH</div>
+            <div class="nav-links">
+                <a href="#services">Leistungen</a>
+                <a href="#team">Das Team</a>
+                <a href="#about">Über Uns</a>
+                <a href="#contact" class="btn-cta">Kontakt aufnehmen</a>
+            </div>
+        </div>
+    </nav>
+
+    <header>
+        <div class="container hero-content">
+            <h1>DIGITALE<br><span>REALITÄTEN</span></h1>
+            <p>Wir transformieren technologische Visionen in funktionale Systeme. Server-Management, Web-Entwicklung und Social Media Strategien aus einer Hand.</p>
+            <a href="#services" class="btn-cta" style="padding: 15px 40px; font-size: 1.2rem;">Lösungen entdecken</a>
+        </div>
+    </header>
+
+    <section id="services">
+        <div class="container">
+            <h2 class="section-title"><span>UNSERE EXPERTISE</span></h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>IT & Server Management</h3>
+                    <p>Maximale Uptime und Sicherheit für Ihre Infrastruktur. Wir übernehmen die Wartung, Einrichtung und den Support Ihrer Serversysteme. Ob Linux-Umgebungen oder komplexe Netzwerke – Herr Ruck sorgt für stabile Backbones.</p>
+                </div>
+                <div class="card">
+                    <h3>Web-Applikationen</h3>
+                    <p>Maßgeschneiderte Softwarelösungen, die exakt auf Ihre Bedürfnisse zugeschnitten sind. Wir entwickeln performante Web-Apps, die Arbeitsabläufe optimieren und Ihre digitale Präsenz auf das nächste Level heben.</p>
+                </div>
+                <div class="card">
+                    <h3>Social Media Operations</h3>
+                    <p>Präsenz ist alles. Wir verwalten Ihre Kanäle professionell, entwickeln Content-Strategien und sorgen dafür, dass Ihre Marke in der digitalen Flut sichtbar bleibt und mit der Zielgruppe interagiert.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="team">
+        <div class="container">
+            <h2 class="section-title"><span>DIE LEITUNG</span></h2>
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="avatar">MR</div>
+                    <div class="member-info">
+                        <h3>Herr Ruck (ruck@quixoticode.de)</h3>
+                        <span class="role">Head of IT & Development</span>
+                        <p>Das technische Herz von V.R. Tech. Verantwortlich für die Programmierung, Server-Architektur und die Implementierung komplexer IT-Lösungen. Er sorgt dafür, dass im Hintergrund alles reibungslos läuft.</p>
+                    </div>
+                </div>
+
+                <div class="team-member">
+                    <div class="avatar">HV</div>
+                    <div class="member-info">
+                        <h3>Herr Volz (volz@quixoticode.de)</h3>
+                        <span class="role">Head of Operations & Client Relations</span>
+                        <p>Die Schnittstelle zwischen Technik und Mensch. Zuständig für Kundenkommunikation, Projektmanagement und strategische Planung. Er übersetzt Ihre Wünsche in technische Anforderungen.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-col">
+                    <h4>V.R. TECH</h4>
+                    <p>Innovation durch Leidenschaft.</p>
+                    <br>
+                    <p>E-Mail: </p> </div>
+                <div class="footer-col">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="#">Server Support</a></li>
+                        <li><a href="#">Web Development</a></li>
+                        <li><a href="#">Social Media</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Rechtliches</h4>
+                    <ul>
+                        <li><a href="#">Impressum</a></li>
+                        <li><a href="#">Datenschutz</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="legal-notice">
+                <p>&copy; 2026 V.R. Tech. Alle Rechte vorbehalten.</p>
+                <p style="margin-top: 5px; opacity: 0.6;">Hinweis: V.R. Tech wird derzeit als nicht-gewerbliches Hobbyprojekt und Interessengemeinschaft betrieben. Alle angebotenen Leistungen erfolgen im Rahmen einer privaten Tätigkeit ohne Gewinnerzielungsabsicht, bis zur offiziellen gewerblichen Anmeldung.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Init Scene
+        const scene = new THREE.Scene();
+        // Fog for depth
+        scene.fog = new THREE.FogExp2(0x050505, 0.002);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+        // Geometry: Particles
+        const geometry = new THREE.BufferGeometry();
+        const count = 2000;
+        const positions = new Float32Array(count * 3);
+
+        for(let i = 0; i < count * 3; i++) {
+            positions[i] = (Math.random() - 0.5) * 20; // Spread range
+        }
+
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+        const material = new THREE.PointsMaterial({
+            size: 0.03,
+            color: 0x00f2ff, // Cyan primary color
+            transparent: true,
+            opacity: 0.8,
+        });
+
+        const particles = new THREE.Points(geometry, material);
+        scene.add(particles);
+
+        // Geometry: Connected Lines (The "Network")
+        const wireGeometry = new THREE.IcosahedronGeometry(4, 2);
+        const wireMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0x7000ff, // Secondary purple
+            wireframe: true,
+            transparent: true,
+            opacity: 0.05
+        });
+        const wireSphere = new THREE.Mesh(wireGeometry, wireMaterial);
+        scene.add(wireSphere);
+
+        camera.position.z = 5;
+
+        // Mouse Interaction
+        let mouseX = 0;
+        let mouseY = 0;
+        let targetX = 0;
+        let targetY = 0;
+
+        const windowHalfX = window.innerWidth / 2;
+        const windowHalfY = window.innerHeight / 2;
+
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX - windowHalfX);
+            mouseY = (event.clientY - windowHalfY);
+        });
+
+        // Handle Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Animation Loop
+        const clock = new THREE.Clock();
+
+        function animate() {
+            targetX = mouseX * 0.001;
+            targetY = mouseY * 0.001;
+
+            const elapsedTime = clock.getElapsedTime();
+
+            // Rotate Particles
+            particles.rotation.y += 0.001;
+            particles.rotation.x += 0.0005;
+
+            // Rotate Wireframe independently
+            wireSphere.rotation.y -= 0.002;
+            wireSphere.rotation.z += 0.001;
+
+            // Gentle wave motion for particles based on mouse
+            particles.rotation.y += 0.05 * (targetX - particles.rotation.y);
+            particles.rotation.x += 0.05 * (targetY - particles.rotation.x);
+
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
