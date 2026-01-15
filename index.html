@@ -19,6 +19,7 @@
             --text-muted: #a0a0a0;
             --glass: rgba(255, 255, 255, 0.05);
             --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-hover: rgba(0, 242, 255, 0.1);
         }
 
         * {
@@ -47,7 +48,7 @@
         }
 
         /* --- Typography & Global --- */
-        h1, h2, h3 {
+        h1, h2, h3, h4 {
             font-family: 'Orbitron', sans-serif;
             text-transform: uppercase;
             letter-spacing: 2px;
@@ -57,6 +58,7 @@
             text-decoration: none;
             color: inherit;
             transition: all 0.3s ease;
+            cursor: pointer;
         }
 
         .container {
@@ -72,7 +74,7 @@
             width: 100%;
             padding: 20px 0;
             z-index: 100;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
             backdrop-filter: blur(5px);
         }
 
@@ -123,6 +125,10 @@
             color: var(--primary);
             font-weight: 700;
             border-radius: 4px;
+            background: transparent;
+            cursor: pointer;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
         }
 
         .btn-cta:hover {
@@ -310,6 +316,114 @@
             color: #666;
         }
 
+        /* --- CONTACT MODAL STYLES --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none; /* Hidden by default */
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: #0a0a0a;
+            border: 1px solid var(--primary);
+            width: 90%;
+            max-width: 500px;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 0 50px rgba(0, 242, 255, 0.2);
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .modal-header h2 {
+            color: #fff;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .modal-header p {
+            color: var(--text-muted);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover {
+            color: var(--primary);
+        }
+
+        .contact-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .contact-option {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            padding: 15px 20px;
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .contact-option:hover {
+            background: var(--glass-hover);
+            border-color: var(--primary);
+            padding-left: 25px; /* Slight movement effect */
+        }
+
+        .contact-option span.arrow {
+            color: var(--primary);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .contact-option:hover span.arrow {
+            opacity: 1;
+        }
+
         @media (max-width: 768px) {
             .hero-content h1 { font-size: 3rem; }
             .team-grid { grid-template-columns: 1fr; }
@@ -328,8 +442,8 @@
             <div class="nav-links">
                 <a href="#services">Leistungen</a>
                 <a href="#team">Das Team</a>
-                <a href="#about">Über Uns</a>
-                <a href="#contact" class="btn-cta">Kontakt aufnehmen</a>
+                <a href="#contact" class="trigger-contact">Kontakt</a>
+                <button class="btn-cta trigger-contact">Anfrage starten</button>
             </div>
         </div>
     </nav>
@@ -338,7 +452,7 @@
         <div class="container hero-content">
             <h1>DIGITALE<br><span>REALITÄTEN</span></h1>
             <p>Wir transformieren technologische Visionen in funktionale Systeme. Server-Management, Web-Entwicklung und Social Media Strategien aus einer Hand.</p>
-            <a href="#services" class="btn-cta" style="padding: 15px 40px; font-size: 1.2rem;">Lösungen entdecken</a>
+            <button class="btn-cta trigger-contact" style="padding: 15px 40px; font-size: 1.2rem;">Projekt besprechen</button>
         </div>
     </header>
 
@@ -369,7 +483,7 @@
                 <div class="team-member">
                     <div class="avatar">MR</div>
                     <div class="member-info">
-                        <h3>Herr Ruck (ruck@quixoticode.de)</h3>
+                        <h3>Herr Ruck</h3>
                         <span class="role">Head of IT & Development</span>
                         <p>Das technische Herz von V.R. Tech. Verantwortlich für die Programmierung, Server-Architektur und die Implementierung komplexer IT-Lösungen. Er sorgt dafür, dass im Hintergrund alles reibungslos läuft.</p>
                     </div>
@@ -378,7 +492,7 @@
                 <div class="team-member">
                     <div class="avatar">HV</div>
                     <div class="member-info">
-                        <h3>Herr Volz (volz@quixoticode.de)</h3>
+                        <h3>Herr Volz</h3>
                         <span class="role">Head of Operations & Client Relations</span>
                         <p>Die Schnittstelle zwischen Technik und Mensch. Zuständig für Kundenkommunikation, Projektmanagement und strategische Planung. Er übersetzt Ihre Wünsche in technische Anforderungen.</p>
                     </div>
@@ -394,7 +508,8 @@
                     <h4>V.R. TECH</h4>
                     <p>Innovation durch Leidenschaft.</p>
                     <br>
-                    <p>E-Mail: </p> </div>
+                    <p>Starten Sie Ihre Anfrage über den Kontakt-Button.</p>
+                </div>
                 <div class="footer-col">
                     <h4>Services</h4>
                     <ul>
@@ -413,16 +528,117 @@
             </div>
             
             <div class="legal-notice">
-                <p>&copy; 2026 V.R. Tech. Alle Rechte vorbehalten.</p>
+                <p>&copy; 2024 V.R. Tech. Alle Rechte vorbehalten.</p>
                 <p style="margin-top: 5px; opacity: 0.6;">Hinweis: V.R. Tech wird derzeit als nicht-gewerbliches Hobbyprojekt und Interessengemeinschaft betrieben. Alle angebotenen Leistungen erfolgen im Rahmen einer privaten Tätigkeit ohne Gewinnerzielungsabsicht, bis zur offiziellen gewerblichen Anmeldung.</p>
             </div>
         </div>
     </footer>
 
+    <div id="contactModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="close-modal" id="closeModal">&times;</button>
+            <div class="modal-header">
+                <h2>ANFRAGE WÄHLEN</h2>
+                <p>Worum geht es bei Ihrem Anliegen?</p>
+            </div>
+            <div class="contact-options">
+                <button class="contact-option" onclick="handleContact(1)">
+                    1. Anfrage für Kooperationen <span class="arrow">→</span>
+                </button>
+                <button class="contact-option" onclick="handleContact(2)">
+                    2. Feedback zu Site/Dienste <span class="arrow">→</span>
+                </button>
+                <button class="contact-option" onclick="handleContact(3)">
+                    3. Allgemeiner Support <span class="arrow">→</span>
+                </button>
+                <button class="contact-option" onclick="handleContact(4)">
+                    4. Rechtliche Schwierigkeiten <span class="arrow">→</span>
+                </button>
+                <button class="contact-option" onclick="handleContact(5)">
+                    5. Sonstiges <span class="arrow">→</span>
+                </button>
+                <button class="contact-option" style="border-color: #ff3333; color: #ffaaaa;" onclick="handleContact(6)">
+                    6. Störungsmeldung <span class="arrow">→</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Emails
+        const EMAIL_VOLZ = "volz@quixoticode.de";
+        const EMAIL_RUCK = "ruck@quixoticode.de";
+
+        // Modal Elements
+        const modal = document.getElementById('contactModal');
+        const closeBtn = document.getElementById('closeModal');
+        const triggers = document.querySelectorAll('.trigger-contact');
+
+        // Open Modal
+        triggers.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                modal.classList.add('active');
+            });
+        });
+
+        // Close Modal
+        closeBtn.addEventListener('click', () => {
+            modal.classList.remove('active');
+        });
+
+        // Close on background click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+            }
+        });
+
+        // Handle Selection
+        function handleContact(id) {
+            let email = "";
+            let subject = "";
+
+            switch(id) {
+                case 1:
+                    email = EMAIL_VOLZ;
+                    subject = "Anfrage für Kooperationen";
+                    break;
+                case 2:
+                    email = EMAIL_RUCK;
+                    subject = "Feedback zu Site/Dienste";
+                    break;
+                case 3:
+                    email = EMAIL_VOLZ;
+                    subject = "Allgemeiner Support";
+                    break;
+                case 4:
+                    email = EMAIL_VOLZ;
+                    subject = "Rechtliche Schwierigkeiten";
+                    break;
+                case 5:
+                    email = EMAIL_VOLZ;
+                    subject = "Sonstige Anfrage";
+                    break;
+                case 6:
+                    email = EMAIL_RUCK;
+                    subject = "DRINGEND: Störungsmeldung";
+                    break;
+            }
+
+            // Open Mail Client
+            window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}`;
+            
+            // Optional: Close modal after click
+            setTimeout(() => {
+                modal.classList.remove('active');
+            }, 500);
+        }
+    </script>
+
     <script>
         // Init Scene
         const scene = new THREE.Scene();
-        // Fog for depth
         scene.fog = new THREE.FogExp2(0x050505, 0.002);
 
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -438,14 +654,14 @@
         const positions = new Float32Array(count * 3);
 
         for(let i = 0; i < count * 3; i++) {
-            positions[i] = (Math.random() - 0.5) * 20; // Spread range
+            positions[i] = (Math.random() - 0.5) * 20; 
         }
 
         geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
         const material = new THREE.PointsMaterial({
             size: 0.03,
-            color: 0x00f2ff, // Cyan primary color
+            color: 0x00f2ff, 
             transparent: true,
             opacity: 0.8,
         });
@@ -453,10 +669,10 @@
         const particles = new THREE.Points(geometry, material);
         scene.add(particles);
 
-        // Geometry: Connected Lines (The "Network")
+        // Geometry: Connected Lines
         const wireGeometry = new THREE.IcosahedronGeometry(4, 2);
         const wireMaterial = new THREE.MeshBasicMaterial({ 
-            color: 0x7000ff, // Secondary purple
+            color: 0x7000ff, 
             wireframe: true,
             transparent: true,
             opacity: 0.05
@@ -480,14 +696,12 @@
             mouseY = (event.clientY - windowHalfY);
         });
 
-        // Handle Resize
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // Animation Loop
         const clock = new THREE.Clock();
 
         function animate() {
@@ -496,15 +710,12 @@
 
             const elapsedTime = clock.getElapsedTime();
 
-            // Rotate Particles
             particles.rotation.y += 0.001;
             particles.rotation.x += 0.0005;
 
-            // Rotate Wireframe independently
             wireSphere.rotation.y -= 0.002;
             wireSphere.rotation.z += 0.001;
 
-            // Gentle wave motion for particles based on mouse
             particles.rotation.y += 0.05 * (targetX - particles.rotation.y);
             particles.rotation.x += 0.05 * (targetY - particles.rotation.x);
 
